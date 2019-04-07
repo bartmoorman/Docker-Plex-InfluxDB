@@ -19,6 +19,7 @@ RUN apt-get update \
     composer \
     git \
     php-cli \
+    php-xml \
     php-zip \
  && composer require influxdb/influxdb-php \
  && apt-get autoremove --yes --purge \
