@@ -24,11 +24,12 @@ while (true) {
         }
 
         $location = (string) $session->Session['location'];
+        $bandwidth = (int) $session->Session['bandwidth'];
 
         $fields['total_streams'] += 1;
         array_key_exists($decision . '_streams', $fields) ? $fields[$decision . '_streams'] += 1 : $fields[$decision . '_streams'] = 1;
-        $fields['total_bandwidth'] += (int) $session->Session['bandwidth'];
-        array_key_exists($location . '_bandwidth', $fields) ? $fields[$location . '_bandwidth'] += (int) $session->Session['bandwidth'] : $fields[$location . '_bandwidth'] = (int) $session->Session['bandwidth'];
+        $fields['total_bandwidth'] += $bandwidth;
+        array_key_exists($location . '_bandwidth', $fields) ? $fields[$location . '_bandwidth'] += $bandwidth : $fields[$location . '_bandwidth'] = $bandwidth;
       }
     }
     $influxPoints[] = new InfluxDB\Point('activity', null, $tags, $fields);
