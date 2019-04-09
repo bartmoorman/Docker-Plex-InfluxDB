@@ -14,14 +14,22 @@ while (true) {
   $influxPoints = [];
   if ($sessions = simplexml_load_file(sprintf('http://%s:%s/status/sessions?X-Plex-Token=%s', getenv('PLEX_HOST'), getenv('PLEX_PORT'), getenv('PLEX_TOKEN')))) {
     $tags = [];
-    $fields = ['stream_count' => 0, 'total_bandwidth' => 0];
+    $fields = ['total_streams' => 0, 'total_bandwidth' => 0];
     foreach ($sessions as $session) {
-      $fields['stream_count'] += 1;
-      $fields['total_bandwidth'] += (int) $session->Session['bandwidth'];
-      $decision = $session->Media->Part['decision'];
-      array_key_exists($decision . '_stream_count', $fields) ? $fields[$decision . '_stream_count'] += 1 : $fields[$decision . '_stream_count'] = 1;
-      $location = $session->Session['location'];
-      array_key_exists($location . '_bandwidth', $fields) ? $fields[$location . '_bandwidth'] += (int) $session->Session['bandwidth'] : $fields[$location . '_bandwidth'] = (int) $session->Session['bandwidth'];
+      if ($session->Session) {
+        if ($session->TranscodeSession && $session->TranscodeSession['videoDecision'] != 'transcode' && $session->TranscodeSession['audioDecision'] != 'transcode') {
+          $decision = 'directstream';
+        } else {
+          $decision = (string) $session->Media->Part['decision'];
+        }
+
+        $location = (string) $session->Session['location'];
+
+        $fields['total_streams'] += 1;
+        array_key_exists($decision . '_streams', $fields) ? $fields[$decision . '_streams'] += 1 : $fields[$decision . '_streams'] = 1;
+        $fields['total_bandwidth'] += (int) $session->Session['bandwidth'];
+        array_key_exists($location . '_bandwidth', $fields) ? $fields[$location . '_bandwidth'] += (int) $session->Session['bandwidth'] : $fields[$location . '_bandwidth'] = (int) $session->Session['bandwidth'];
+      }
     }
     $influxPoints[] = new InfluxDB\Point('activity', null, $tags, $fields);
     $influxDatabase->writePoints($influxPoints);
