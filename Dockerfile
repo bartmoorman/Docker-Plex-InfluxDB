@@ -19,6 +19,7 @@ RUN apt-get update \
     composer \
     git \
     php-cli \
+    php-curl \
     php-xml \
     php-zip \
  && composer require influxdb/influxdb-php \
