@@ -1,10 +1,10 @@
 FROM bmoorman/ubuntu:bionic
 
 ENV INTERVAL="10" \
-    PLEX_HOST="localhost" \
+    PLEX_HOST="plex" \
     PLEX_PORT="32400" \
     PLEX_TOKEN="" \
-    INFLUXDB_HOST="localhost" \
+    INFLUXDB_HOST="influxdb" \
     INFLUXDB_PORT="8086" \
     INFLUXDB_USERNAME="" \
     INFLUXDB_PASSWORD="" \
