@@ -1,9 +1,9 @@
 #!/usr/bin/php
 <?php
 require('vendor/autoload.php');
-$influxClient = new InfluxDB\Client(getenv('INFLUXDB_HOST'), getenv('INFLUXDB_PORT'), getenv('INFLUXDB_USERNAME'), getenv('INFLUXDB_PASSWORD'));
+$influxClient = new InfluxDB\Client(getenv('INFLUXDB_HOST') ?: 'influxdb', getenv('INFLUXDB_PORT') ?: 8086, getenv('INFLUXDB_USERNAME'), getenv('INFLUXDB_PASSWORD'));
 
-$influxDatabase = $influxClient->selectDB(getenv('INFLUXDB_DATABASE'));
+$influxDatabase = $influxClient->selectDB(getenv('INFLUXDB_DATABASE') ?: 'plex');
 if (!$influxDatabase->exists()) {
   $influxDatabase->create();
 }
@@ -12,7 +12,7 @@ while (true) {
   $time = -microtime(true);
 
   $influxPoints = [];
-  if ($sessions = simplexml_load_file(sprintf('http://%s:%s/status/sessions?X-Plex-Token=%s', getenv('PLEX_HOST'), getenv('PLEX_PORT'), getenv('PLEX_TOKEN')))) {
+  if ($sessions = simplexml_load_file(sprintf('http://%s:%u/status/sessions?X-Plex-Token=%s', getenv('PLEX_HOST') ?: 'plex', getenv('PLEX_PORT') ?: 32400, getenv('PLEX_TOKEN')))) {
     $tags = [];
     $fields = [
       'total_streams' => 0, 'directplay_streams' => 0, 'directstream_streams' => 0, 'transcode_streams' => 0,
@@ -40,6 +40,6 @@ while (true) {
   }
 
   $time += microtime(true);
-  usleep((getenv('INTERVAL') - $time) * pow(10, 6));
+  usleep((getenv('INTERVAL') ?: 10 - $time) * pow(10, 6));
 }
 ?>

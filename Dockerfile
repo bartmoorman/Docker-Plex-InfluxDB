@@ -1,16 +1,6 @@
 FROM bmoorman/ubuntu:bionic
 
-ENV INTERVAL="10" \
-    PLEX_HOST="plex" \
-    PLEX_PORT="32400" \
-    PLEX_TOKEN="" \
-    INFLUXDB_HOST="influxdb" \
-    INFLUXDB_PORT="8086" \
-    INFLUXDB_USERNAME="" \
-    INFLUXDB_PASSWORD="" \
-    INFLUXDB_DATABASE="plex"
-
-ARG DEBIAN_FRONTEND="noninteractive"
+ARG DEBIAN_FRONTEND=noninteractive
 
 WORKDIR /usr/local/bin
 
