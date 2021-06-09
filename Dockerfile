@@ -1,4 +1,4 @@
-FROM composer AS builder
+FROM composer:latest AS builder
 
 WORKDIR /opt/composer
 
